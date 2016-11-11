@@ -15,7 +15,6 @@ export function fetchMetrics() {
 
 export function updateCharts(d, p, b, l) {
     const dataLength = d.length;
-    console.log("dataLength is " + dataLength);
     let pieData = [0, 0],
         barData = [
             [],
@@ -31,7 +30,6 @@ export function updateCharts(d, p, b, l) {
     for (var i = 1; i < dataLength; i++) {
         accumData.push(d[i].total_issues + accumData[i - 1]);
     }
-    console.log(accumData);
     // Process data
     for (let i = dataLength - 1; i >= 0; i--) {
         // For pie data

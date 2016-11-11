@@ -5,9 +5,11 @@ import Footer from "../components/Footer";
 
 export default class Layout extends React.Component {
     render() {
+        const { pathname } = this.props.location;
         return (
+            // TopNav - Navbar, header, menu
             <div class="wrapper">
-                <TopNav />
+                <TopNav titleName = { pathname }/>
                 {this.props.children}
                 <Footer />
             </div>
