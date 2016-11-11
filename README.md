@@ -5,7 +5,7 @@
 ### INSTRUCTIONS
 
 1. npm install
-2. Open terminal
+2. Open terminal, go to file directory
 3. Terminal run: gulp public
 	* Runs app (google chrome will initialize) 
 4. For developer mode instead, terminal run: gulp 
@@ -18,7 +18,7 @@
 
 ### ReactJs
 
-Main files:
+- Main files:
 	Bundle.js -> Pages -> Components
-Redux components:
+- Redux components:
 	Reducers, Actions, Store.js for handling data and functions
