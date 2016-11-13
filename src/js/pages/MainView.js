@@ -7,6 +7,7 @@ import * as issuesActions from "../actions/issuesActions";
 @connect((store) => {
     return {
         issues: store.issues.issues,
+        fetching: store.issues.fetching,
         filteredIssues: store.issues.filteredIssues,
         selectValue: store.issues.selectValue,
         sortValue: store.issues.sortValue,
@@ -14,20 +15,40 @@ import * as issuesActions from "../actions/issuesActions";
 })
 
 export default class MainView extends React.Component {
+
+    startPoll() {
+        const { dispatch, fetching } = this.props;
+        this.timeout = setTimeout(() => {
+            if (!fetching) dispatch(issuesActions.fetchIssues());
+            this.startPoll();
+        }, 2500);
+    }
+
+    // Clear timeouts when changing page
+    componentWillUnmount() {
+        clearTimeout(this.timeout);
+    }
+
     // After rendering, dispatch and fetch issues from database
     componentDidMount() {
-        this.props.dispatch(issuesActions.fetchIssues());
+        const { dispatch, filteredIssues} = this.props;
+        // only run once if the filtedissues are not defined
+        let check = false;
+        if (!filteredIssues) check = true;
+        dispatch(issuesActions.fetchIssues(check));
+        this.startPoll();
     }
+
     // Run the on filter change function
     _onFilterChange(event) {
-        const { dispatch, issues, selectValue } = this.props;
-        dispatch(issuesActions._onFilterChange(event, issues, selectValue));
-    }
-    // Run the select function for dispatching
+            const { dispatch, issues, selectValue } = this.props;
+            dispatch(issuesActions._onFilterChange(event, issues, selectValue));
+        }
+        // Run the select function for dispatching
     _onSelectChange(event) {
-        this.props.dispatch(issuesActions._onSelectChange(event.target.value));
-    }
-    // Run the sort function
+            this.props.dispatch(issuesActions._onSelectChange(event.target.value));
+        }
+        // Run the sort function
     _sortRowsBy() {
         const { dispatch, filteredIssues, selectValue, sortValue } = this.props;
         dispatch(issuesActions._sortRowsBy(filteredIssues, selectValue, sortValue));
@@ -38,11 +59,11 @@ export default class MainView extends React.Component {
         // If filtered Issues have not been loaded, render ajax gif first
         if (filteredIssues == null) {
             // Load ajax gif
-            return <h1>Loading ajax</h1>
+            return <h1>Loading Issues</h1>
         }
         // Render the main dashboard after data has been loaded
         return (
-            <div class="page-wrapper">
+            <div class="page-wrapper" ref="mainView">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-lg-12">

@@ -2,6 +2,7 @@ export default function reducer(state = {
     locations: null,
     googleScript: null,
     fetchedGoogle: false,
+    fetching: false,
     fetchedLoc: false,
     errorLoc: null,
     infoMarker: {
@@ -16,10 +17,19 @@ export default function reducer(state = {
 }, action) {
 
     switch (action.type) {
+        case "FETCH_LOC":
+            {
+                return {
+                    ...state,
+                    fetching: true,
+                    errorLoc: action.payload
+                }
+            }
         case "FETCH_LOC_REJECTED":
             {
                 return {
                     ...state,
+                    fetching: false,
                     fetchedLoc: false,
                     errorLoc: action.payload
                 }
@@ -28,6 +38,7 @@ export default function reducer(state = {
             {
                 return {
                     ...state,
+                    fetching: false,
                     fetchedLoc: true,
                     locations: action.payload,
                 }

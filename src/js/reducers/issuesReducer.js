@@ -10,11 +10,18 @@ export default function reducer(state = {
     switch (action.type) {
         case "FETCH_ISSUES":
             {
-                return {...state, fetching: true }
+                return {
+                    ...state,
+                    fetching: true
+                }
             }
         case "FETCH_ISSUES_REJECTED":
             {
-                return {...state, fetching: false, error: action.payload }
+                return {
+                    ...state,
+                    fetching: false,
+                    error: action.payload
+                }
             }
         case "FETCH_ISSUES_FULFILLED":
             {

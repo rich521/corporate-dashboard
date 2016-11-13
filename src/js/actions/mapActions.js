@@ -1,7 +1,8 @@
 import axios from "axios";
 
-export function fetchLocations(refMap) {
+export function fetchLocations(refMap, check) {
     return function(dispatch) {
+        dispatch({ type: "FETCH_LOC" });
         axios.get("./data/location.json")
             .then((response) => {
                 // First aquire location data
@@ -9,7 +10,7 @@ export function fetchLocations(refMap) {
                 return response.data;
             }).then((data) => {
                 // Next acquire google map
-                fetchGoogleScript(refMap, dispatch, data);
+                if (check) fetchGoogleScript(refMap, dispatch, data);
             })
             .catch((err) => {
                 // Catch any error
@@ -37,7 +38,6 @@ function fetchGoogleScript(refMap, dispatch, data) {
 }
 
 export function fetchGoogleMap(google, dispatch, locations, id) {
-
     const initLocation = { lat: 41.878114, lng: -87.62979 };
     var map = new google.maps.Map(id, {
         zoom: 4,

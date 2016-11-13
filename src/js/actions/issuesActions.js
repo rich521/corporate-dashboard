@@ -1,13 +1,14 @@
 import axios from "axios";
 
 // Fetch the issue data
-export function fetchIssues() {
+export function fetchIssues(check) {
     return function(dispatch) {
+        dispatch({ type: "FETCH_ISSUES" });
         axios.get("./data/issues.csv")
             .then((response) => {
                 response.data = csvJSON(response.data);
                 dispatch({ type: "FETCH_ISSUES_FULFILLED", payload: response.data });
-                dispatch({ type: "FILTER_ISSUES", payload: response.data });
+                if (check) dispatch({ type: "FILTER_ISSUES", payload: response.data });
             })
             .catch((err) => {
                 dispatch({ type: "FETCH_ISSUES_REJECTED", payload: err });

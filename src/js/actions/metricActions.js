@@ -1,15 +1,24 @@
 import axios from "axios";
 import Chart from "chart.js";
 
-export function fetchMetrics() {
+export function fetchMetrics(once, p, b, l) {
     return function(dispatch) {
+        dispatch({ type: "FETCH_METRIC" });
         axios.get("./data/metrics.json")
             .then((response) => {
                 dispatch({ type: "FETCH_METRIC_FULFILLED", payload: response.data });
+                if (once) updateCharts(response.data, p, b, l);
             })
             .catch((err) => {
                 dispatch({ type: "FETCH_METRIC_REJECTED", payload: err });
             });
+    }
+}
+
+export function fetchOnce() {
+    console.log("hello");
+    return function(dispatch) {
+        dispatch({ type: "UPDATE_METRIC" });
     }
 }
 
