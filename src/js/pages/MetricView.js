@@ -16,7 +16,12 @@ export default class MetricView extends React.Component {
         const { dispatch, fetchedMetric, oneFetch } = this.props;
         const { pieChart, barChart, lineChart } = this.refs;
         // If charts are rendered, then update charts with new data
-        if (!equals(fetchedMetric, nextProps.fetchedMetric)) metricActions.updateCharts(fetchedMetric, pieChart, barChart, lineChart);
+        let nextMetric = nextProps.fetchedMetric;
+        if (fetchedMetric && nextMetric) {
+            if (equals(fetchedMetric, nextMetric)){
+                metricActions.updateCharts(nextMetric, pieChart, barChart, lineChart, true);
+            } 
+        }
     }
 
     // Fetch data every 5 seconds

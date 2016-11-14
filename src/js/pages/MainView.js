@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import TableIssues from "../components/TableIssues";
 import * as issuesActions from "../actions/issuesActions";
+import { equals } from "../actions/arrayActions";
 
 // Main data store for handling and processing
 @connect((store) => {
@@ -15,6 +16,11 @@ import * as issuesActions from "../actions/issuesActions";
 })
 
 export default class MainView extends React.Component {
+    componentWillReceiveProps(nextProps) {
+        const { issues, dispatch, selectValue } = this.props;
+        let filtIssues = nextProps.issues;
+        if (equals(issues, filtIssues)) dispatch(issuesActions._onFilterChange(false, filtIssues, selectValue));
+    }
 
     startPoll() {
         const { dispatch, fetching } = this.props;
@@ -31,7 +37,7 @@ export default class MainView extends React.Component {
 
     // After rendering, dispatch and fetch issues from database
     componentDidMount() {
-        const { dispatch, filteredIssues} = this.props;
+        const { dispatch, filteredIssues } = this.props;
         // only run once if the filtedissues are not defined
         let check = false;
         if (!filteredIssues) check = true;

@@ -1,6 +1,9 @@
 // Returns true or false for comparing two arrays
 export function equals(arr1, arr2) {
-    if (!arr2 || !arr1) return true;
-    if (arr1.length != arr2.length) return true;
-    return (arr1.join('') == arr2.join(''));
+	let aLength = arr1.length;
+    if (aLength !== arr2.length) return true;
+    for (var i = aLength - 1; i >= 0; i--) {
+    	if (JSON.stringify(arr1[i]) !== JSON.stringify(arr2[i])) return true;
+    }
+    return false;
 }

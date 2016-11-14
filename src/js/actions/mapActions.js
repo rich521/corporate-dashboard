@@ -37,8 +37,24 @@ function fetchGoogleScript(refMap, dispatch, data) {
     document.getElementsByTagName('head')[0].appendChild(script);
 }
 
-export function fetchGoogleMap(google, dispatch, locations, id) {
-    const initLocation = { lat: 41.878114, lng: -87.62979 };
+export function fetchGoogleMap(google, dispatch, locations, id, infoMarker) {
+    let initLocation = { lat: 41.878114, lng: -87.62979 };
+    if (infoMarker) {
+        let loc = locations[infoMarker.id],
+            locPos = loc.position;
+        initLocation = { lat: locPos.lat, lng: locPos.lng };
+        dispatch({
+            type: "CHANGE_INFO_MARKER",
+            payload: {
+                id: infoMarker.id,
+                company_name: loc.company_name,
+                employees: loc.employees,
+                position: locPos,
+                city: loc.city,
+            }
+        });
+    }
+
     var map = new google.maps.Map(id, {
         zoom: 4,
         center: initLocation
@@ -47,7 +63,7 @@ export function fetchGoogleMap(google, dispatch, locations, id) {
     if (!locations) return;
 
     const locIndex = locations.length;
-    for (var i = locIndex - 1; i >= 0; i--) {
+    for (let i = locIndex - 1; i >= 0; i--) {
         const newLoc = locations[i];
         const marker = new google.maps.Marker({
             position: newLoc.position,
@@ -56,13 +72,11 @@ export function fetchGoogleMap(google, dispatch, locations, id) {
             animation: google.maps.Animation.DROP
         });
         // Initial marker to show selected
-        if (i === 6) {
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-            setTimeout(() => {
-                marker.setAnimation(null);
-            }, 3000);
-        }
+        if (infoMarker) if (i === infoMarker.id) animateMarker(google, marker);
+        if (i === 6 && !infoMarker) animateMarker(google, marker);
+
         marker.addListener("click", () => {
+            let id = i;
             if (marker.getAnimation() === null) {
                 marker.setAnimation(google.maps.Animation.BOUNCE);
                 setTimeout(() => {
@@ -72,6 +86,7 @@ export function fetchGoogleMap(google, dispatch, locations, id) {
             dispatch({
                 type: "CHANGE_INFO_MARKER",
                 payload: {
+                    id: id,
                     company_name: newLoc.company_name,
                     employees: newLoc.employees,
                     position: newLoc.position,
@@ -80,4 +95,11 @@ export function fetchGoogleMap(google, dispatch, locations, id) {
             });
         });
     }
+}
+
+function animateMarker(google, marker) {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(() => {
+        marker.setAnimation(null);
+    }, 3000);
 }

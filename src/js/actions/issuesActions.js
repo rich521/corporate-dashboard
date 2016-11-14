@@ -35,18 +35,18 @@ function csvJSON(csv) {
 // Search bar filter on change
 export function _onFilterChange(event, issues, select) {
     return function(dispatch) {
-        if (!event.target.value) {
+        if (!event) {
             dispatch({ type: "FILTER_ISSUES", payload: issues });
+            return;
         }
+
         const filterBy = event.target.value.toString().toLowerCase(),
             size = issues.length,
             filteredList = [],
             str = select + "";
         for (let i = 0; i < size; i++) {
             let v = issues[i][str];
-            if (v.toString().toLowerCase().indexOf(filterBy) !== -1) {
-                filteredList.push(issues[i]);
-            }
+            if (v.toString().toLowerCase().indexOf(filterBy) !== -1) filteredList.push(issues[i]);
         }
 
         if (filteredList == null) return;

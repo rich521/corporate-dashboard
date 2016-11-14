@@ -6,6 +6,7 @@ export default function reducer(state = {
     fetchedLoc: false,
     errorLoc: null,
     infoMarker: {
+        "id": 6,
         "company_name": "Thoughtstorm",
         "employees": 9,
         "city": "Chicago",

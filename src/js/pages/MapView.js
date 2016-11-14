@@ -19,9 +19,10 @@ import InfoTable from "../components/InfoTable";
 export default class MapView extends React.Component {
     // Only change markers if there is a change in data
     componentWillReceiveProps(nextProps) {
-        const { dispatch, googleScript, locations } = this.props;
+        const { dispatch, googleScript, locations, infoMarker } = this.props;
+        let updateLocation = nextProps.locations;
         if (!locations || !googleScript) return;
-        if (!equals(locations, nextProps.locations)) mapActions.fetchGoogleMap(googleScript, dispatch, locations, this.refs.gmap);
+        if (equals(locations, updateLocation)) mapActions.fetchGoogleMap(googleScript, dispatch, updateLocation, this.refs.gmap, infoMarker);
     }
 
     // Fetch data every 5 seconds
@@ -39,10 +40,10 @@ export default class MapView extends React.Component {
     }
 
     componentDidMount() {
-        const { dispatch, fetchedGoogle, fetchedLoc, googleScript, locations } = this.props;
+        const { dispatch, fetchedGoogle, fetchedLoc, googleScript, locations, infoMarker } = this.props;
         const { gmap } = this.refs;
         if (!fetchedGoogle) dispatch(mapActions.fetchLocations(gmap, true));
-        if (fetchedGoogle) mapActions.fetchGoogleMap(googleScript, dispatch, locations, gmap);
+        if (fetchedGoogle) mapActions.fetchGoogleMap(googleScript, dispatch, locations, gmap, infoMarker);
         this.startPoll();
     }
 
