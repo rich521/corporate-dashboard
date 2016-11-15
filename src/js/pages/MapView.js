@@ -32,7 +32,7 @@ export default class MapView extends React.Component {
             if (!googleScript) return;
             if (!fetching) dispatch(mapActions.fetchLocations(this.refs.gmap, false));
             this.startPoll();
-        }, 5000);
+        }, 2500);
     }
 
     componentWillUnmount() {

@@ -1,5 +1,7 @@
 import axios from "axios";
 
+let map,
+    markers = [];
 export function fetchLocations(refMap, check) {
     return function(dispatch) {
         dispatch({ type: "FETCH_LOC" });
@@ -32,17 +34,29 @@ function fetchGoogleScript(refMap, dispatch, data) {
     script.onload = function googleScript() {
         // Load markers and data onto google map
         dispatch({ type: "FETCH_GOOGLE_FULFILLED", payload: google });
-        fetchGoogleMap(google, dispatch, data, refMap);
+        map = new google.maps.Map(refMap, {
+            zoom: 4,
+            center: { lat: 41.878114, lng: -87.62979 },
+        });
+        fetchGoogleMap(google, dispatch, data);
     }
     document.getElementsByTagName('head')[0].appendChild(script);
+
+
 }
 
 export function fetchGoogleMap(google, dispatch, locations, id, infoMarker) {
-    let initLocation = { lat: 41.878114, lng: -87.62979 };
     if (infoMarker) {
-        let loc = locations[infoMarker.id],
+        let loc,
+            locPos;
+        if (locations.length < infoMarker.id) {
+            loc = locations[0];
             locPos = loc.position;
-        initLocation = { lat: locPos.lat, lng: locPos.lng };
+        } else {
+            loc = locations[infoMarker.id];
+            locPos = loc.position;
+        }
+        map.setCenter({ lat: locPos.lat, lng: locPos.lng })
         dispatch({
             type: "CHANGE_INFO_MARKER",
             payload: {
@@ -55,14 +69,16 @@ export function fetchGoogleMap(google, dispatch, locations, id, infoMarker) {
         });
     }
 
-    var map = new google.maps.Map(id, {
-        zoom: 4,
-        center: initLocation
-    });
-
     if (!locations) return;
+    const locIndex = locations.length,
+        markerIndex = markers.length;
 
-    const locIndex = locations.length;
+    if (markerIndex) {
+        for (var i = markerIndex - 1; i >= 0; i--) {
+            markers[i].setMap(null);
+        }
+    }
+    markers = [];
     for (let i = locIndex - 1; i >= 0; i--) {
         const newLoc = locations[i];
         const marker = new google.maps.Marker({
@@ -72,7 +88,8 @@ export function fetchGoogleMap(google, dispatch, locations, id, infoMarker) {
             animation: google.maps.Animation.DROP
         });
         // Initial marker to show selected
-        if (infoMarker) if (i === infoMarker.id) animateMarker(google, marker);
+        if (infoMarker)
+            if (i === infoMarker.id) animateMarker(google, marker);
         if (i === 6 && !infoMarker) animateMarker(google, marker);
 
         marker.addListener("click", () => {
@@ -81,7 +98,7 @@ export function fetchGoogleMap(google, dispatch, locations, id, infoMarker) {
                 marker.setAnimation(google.maps.Animation.BOUNCE);
                 setTimeout(() => {
                     marker.setAnimation(null);
-                }, 3000);
+                }, 1400);
             }
             dispatch({
                 type: "CHANGE_INFO_MARKER",
@@ -94,6 +111,7 @@ export function fetchGoogleMap(google, dispatch, locations, id, infoMarker) {
                 }
             });
         });
+        markers.push(marker);
     }
 }
 
